@@ -1,0 +1,172 @@
+-- Serviços necessários
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local UserInputService = game:GetService("UserInputService")
+local Lighting = game:GetService("Lighting")
+local Workspace = game:GetService("Workspace")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- =============================
+-- FPS BOOSTER (Melhora o desempenho)
+-- =============================
+local function FPSBooster()
+    for _, v in pairs(Workspace:GetDescendants()) do
+        if v:IsA("Part") or v:IsA("MeshPart") then
+            v.Material = Enum.Material.SmoothPlastic
+            v.Reflectance = 0
+        end
+    end
+    Lighting.GlobalShadows = false
+    Lighting.FogEnd = 9e9
+    settings().Rendering.QualityLevel = 1
+    print("FPS Booster ativado!")
+end
+FPSBooster()
+
+-- =============================
+-- CHAMS (ESP Aprimorado)
+-- =============================
+local function Chams(player)
+    if player ~= LocalPlayer and player.Character then
+        for _, part in pairs(player.Character:GetChildren()) do
+            if part:IsA("BasePart") then
+                local highlight = Instance.new("Highlight")
+                highlight.Parent = part
+                highlight.FillColor = Color3.fromRGB(255, 0, 0) -- Vermelho para visibilidade
+                highlight.OutlineColor = Color3.fromRGB(255, 255, 255) -- Branco para borda
+                highlight.DepthMode = Enum.HighlightDepthMode.AlwaysOnTop
+            end
+        end
+    end
+end
+
+for _, player in pairs(Players:GetPlayers()) do
+    Chams(player)
+end
+
+Players.PlayerAdded:Connect(function(player)
+    player.CharacterAdded:Connect(function()
+        Chams(player)
+    end)
+end)
+
+-- =============================
+-- AUTO DODGE (Desvio Automático)
+-- =============================
+local function AutoDodge()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        for _, player in pairs(Players:GetPlayers()) do
+            if player ~= LocalPlayer and player.Character and player.Character:FindFirstChild("Knife") then
+                local distance = (LocalPlayer.Character.HumanoidRootPart.Position - player.Character.HumanoidRootPart.Position).magnitude
+                if distance < 15 then
+                    LocalPlayer.Character.HumanoidRootPart.CFrame = LocalPlayer.Character.HumanoidRootPart.CFrame * CFrame.new(math.random(-10,10), 0, math.random(-10,10))
+                end
+            end
+        end
+    end
+end
+RunService.RenderStepped:Connect(AutoDodge)
+
+-- =============================
+-- AUTO PICKUP GUN
+-- =============================
+local function AutoPickupGun()
+    for _, item in pairs(Workspace:GetChildren()) do
+        if item:IsA("Tool") and item.Name == "Gun" then
+            LocalPlayer.Character.Humanoid:EquipTool(item)
+        end
+    end
+end
+RunService.RenderStepped:Connect(AutoPickupGun)
+
+-- =============================
+-- AUTO USE KNIFE
+-- =============================
+local function AutoUseKnife()
+    if LocalPlayer.Role.Value == "Murderer" and LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Knife") then
+        LocalPlayer.Character.Knife:Activate()
+        wait(0.2)
+    end
+end
+RunService.RenderStepped:Connect(AutoUseKnife)
+
+-- =============================
+-- FAKE LAG
+-- =============================
+local function FakeLag()
+    while true do
+        wait(math.random(1, 3))
+        LocalPlayer.Character.HumanoidRootPart.Anchored = true
+        wait(0.1)
+        LocalPlayer.Character.HumanoidRootPart.Anchored = false
+    end
+end
+spawn(FakeLag)
+
+-- =============================
+-- INVISIBILITY GLITCH
+-- =============================
+local function InvisibilityGlitch()
+    if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("HumanoidRootPart") then
+        LocalPlayer.Character.HumanoidRootPart.Transparency = 1
+        for _, part in pairs(LocalPlayer.Character:GetChildren()) do
+            if part:IsA("BasePart") and part.Name ~= "HumanoidRootPart" then
+                part.Transparency = 1
+            end
+        end
+    end
+end
+UserInputService.InputBegan:Connect(function(input)
+    if input.KeyCode == Enum.KeyCode.X then
+        InvisibilityGlitch()
+    end
+end)
+
+-- =============================
+-- FORCE SHERIFF
+-- =============================
+local function ForceSheriff()
+    while true do
+        wait(1)
+        if LocalPlayer:FindFirstChild("Role") then
+            LocalPlayer.Role.Value = "Sheriff"
+        end
+    end
+end
+spawn(ForceSheriff)
+
+-- =============================
+-- GOD MODE
+-- =============================
+local function GodMode()
+    while true do
+        wait(0.1)
+        if LocalPlayer.Character and LocalPlayer.Character:FindFirstChild("Humanoid") then
+            LocalPlayer.Character.Humanoid.MaxHealth = math.huge
+            LocalPlayer.Character.Humanoid.Health = math.huge
+        end
+    end
+end
+spawn(GodMode)
+
+-- =============================
+-- CUSTOM UI (Interface gráfica)
+-- =============================
+local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
+local Frame = Instance.new("Frame", ScreenGui)
+Frame.Size = UDim2.new(0, 200, 0, 300)
+Frame.Position = UDim2.new(0, 10, 0, 10)
+Frame.BackgroundColor3 = Color3.new(0, 0, 0)
+
+local ESPButton = Instance.new("TextButton", Frame)
+ESPButton.Size = UDim2.new(0, 180, 0, 50)
+ESPButton.Position = UDim2.new(0, 10, 0, 10)
+ESPButton.Text = "Ativar ESP"
+ESPButton.MouseButton1Click:Connect(function()
+    ESP_Enabled = not ESP_Enabled
+    ESPButton.Text = ESP_Enabled and "Desativar ESP" or "Ativar ESP"
+end)
+
+print("NahHub COMPLETO carregado!")
